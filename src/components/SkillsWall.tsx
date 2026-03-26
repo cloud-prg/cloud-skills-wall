@@ -303,6 +303,18 @@ export default function SkillsWall() {
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
+          {/* 右上角数据源切换 */}
+          <div className="absolute top-0 right-0">
+            <Radio.Group
+              value={dataSource}
+              onChange={(e) => handleDataSourceChange(e.target.value)}
+              size="small"
+            >
+              <Radio.Button value="skills">Skills</Radio.Button>
+              <Radio.Button value="claw">Claw</Radio.Button>
+            </Radio.Group>
+          </div>
+
           {/* GitHub 猫咪图标 */}
           <div className="mb-6">
             <svg
@@ -333,29 +345,12 @@ export default function SkillsWall() {
           </h1>
 
           {/* 副标题 */}
-          <p className="text-lg max-w-2xl mx-auto mb-6" style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.7)' : 'rgba(103, 232, 249, 0.7)' }}>
+          <p className="text-lg max-w-2xl mx-auto mb-10" style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.7)' : 'rgba(103, 232, 249, 0.7)' }}>
             {dataSource === 'skills'
               ? '探索 OpenClaw 社区最受欢迎的 Skills，提升你的开发效率'
               : '探索 ClawHub 高热度 Claw Skills，扩展你的 Agent 能力'
             }
           </p>
-
-          {/* 数据源切换 - 横向排列 */}
-          <div className="flex justify-center mb-10">
-            <Radio.Group
-              value={dataSource}
-              onChange={(e) => handleDataSourceChange(e.target.value)}
-              size="middle"
-              className="source-switcher"
-            >
-              <Radio.Button value="skills" className="flex items-center gap-2 px-6">
-                Skills
-              </Radio.Button>
-              <Radio.Button value="claw" className="flex items-center gap-2 px-6">
-                Claw Skills
-              </Radio.Button>
-            </Radio.Group>
-          </div>
           
           {/* 统计卡片 */}
           <Row gutter={16} className="max-w-4xl mx-auto">
