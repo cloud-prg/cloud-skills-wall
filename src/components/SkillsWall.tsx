@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Tag, Button, Input, Select, Statistic, Row, Col, Tooltip, Badge, Empty } from 'antd';
 import { CopyOutlined, LinkOutlined, RiseOutlined, AppstoreOutlined, SearchOutlined, FireOutlined } from '@ant-design/icons';
-import { Skill, getTopSkills, getCategories, searchSkills, getStats } from '../services/skillsData';
+import type { Skill } from '../services/skillsData';
+import { getTopSkills, getCategories, searchSkills, getStats } from '../services/skillsData';
 
 const { Search } = Input;
 const { Option } = Select;

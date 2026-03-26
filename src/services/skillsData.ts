@@ -1,7 +1,8 @@
 // 技能数据服务 - 模拟API获取技能排行榜数据
 // 实际项目中可以通过定时任务调用 npx skills find 命令获取最新数据
 
-export interface Skill {
+// Skill 类型定义
+export type Skill = {
   id: string;
   name: string;
   owner: string;
