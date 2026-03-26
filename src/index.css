@@ -137,6 +137,44 @@ body {
   display: none !important;
 }
 
+/* 数据源切换样式 */
+.source-switcher {
+  background: rgba(20, 20, 30, 0.9);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.source-switcher .ant-radio-button-wrapper {
+  background: transparent !important;
+  border: none !important;
+  color: #9ca3af !important;
+  transition: all 0.3s ease;
+  padding: 0 20px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.source-switcher .ant-radio-button-wrapper:hover {
+  color: #c4b5fd !important;
+}
+
+.source-switcher .ant-radio-button-wrapper-checked {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.3)) !important;
+  color: #e9d5ff !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.3);
+}
+
+.source-switcher .ant-radio-button-wrapper-checked:hover {
+  color: #e9d5ff !important;
+}
+
+.source-switcher .ant-radio-button-wrapper:not(:first-child)::before {
+  display: none !important;
+}
+
 /* 表格样式 - 暗黑主题 */
 .skills-table .ant-table {
   background: transparent !important;
