@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Tag, Button, Input, Select, Statistic, Row, Col, Tooltip, Badge, Empty, Table, Radio, Space } from 'antd';
-import { CopyOutlined, LinkOutlined, RiseOutlined, AppstoreOutlined, SearchOutlined, FireOutlined, UnorderedListOutlined, TableOutlined, GithubOutlined, CloudOutlined } from '@ant-design/icons';
+import { CopyOutlined, LinkOutlined, RiseOutlined, SearchOutlined, FireOutlined, UnorderedListOutlined, TableOutlined } from '@ant-design/icons';
 import type { Skill } from '../services/skillsData';
 import { getTopSkills, getCategories, searchSkills, getStats } from '../services/skillsData';
 import type { ClawSkill } from '../services/clawSkillsData';
@@ -302,55 +302,59 @@ export default function SkillsWall() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: dataSource === 'skills' ? 'rgba(167, 139, 250, 0.08)' : 'rgba(34, 211, 238, 0.08)' }} />
         </div>
         
-        <div className="max-w-7xl mx-auto relative z-10">
-          {/* 数据源切换 - 顶部 */}
-          <div className="flex justify-center mb-8">
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
+          {/* GitHub 猫咪图标 */}
+          <div className="mb-6">
+            <svg
+              viewBox="0 0 24 24"
+              width="64"
+              height="64"
+              fill="white"
+              className="drop-shadow-lg"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))' }}
+            >
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </div>
+
+          {/* 标题 */}
+          <h1
+            className="text-5xl font-bold mb-4"
+            style={{
+              background: dataSource === 'skills'
+                ? 'linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 30%, #a78bfa 60%, #818cf8 100%)'
+                : 'linear-gradient(135deg, #a5f3fc 0%, #67e8f9 30%, #22d3ee 60%, #0ea5e9 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            {dataSource === 'skills' ? '技能包展示墙' : 'Claw Skills 展示墙'}
+          </h1>
+
+          {/* 副标题 */}
+          <p className="text-lg max-w-2xl mx-auto mb-6" style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.7)' : 'rgba(103, 232, 249, 0.7)' }}>
+            {dataSource === 'skills'
+              ? '探索 OpenClaw 社区最受欢迎的 Skills，提升你的开发效率'
+              : '探索 ClawHub 高热度 Claw Skills，扩展你的 Agent 能力'
+            }
+          </p>
+
+          {/* 数据源切换 - 横向排列 */}
+          <div className="flex justify-center mb-10">
             <Radio.Group
               value={dataSource}
               onChange={(e) => handleDataSourceChange(e.target.value)}
-              size="large"
+              size="middle"
               className="source-switcher"
             >
-              <Radio.Button value="skills" className="flex items-center gap-2">
-                <CloudOutlined /> Skills
+              <Radio.Button value="skills" className="flex items-center gap-2 px-6">
+                Skills
               </Radio.Button>
-              <Radio.Button value="claw" className="flex items-center gap-2">
-                <GithubOutlined /> Claw Skills
+              <Radio.Button value="claw" className="flex items-center gap-2 px-6">
+                Claw Skills
               </Radio.Button>
             </Radio.Group>
-          </div>
-
-          <div className="text-center mb-10">
-            <div
-              className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 shadow-lg"
-              style={{
-                background: dataSource === 'skills'
-                  ? 'linear-gradient(135deg, #8b5cf6, #6366f1)'
-                  : 'linear-gradient(135deg, #22d3ee, #0ea5e9)',
-                boxShadow: dataSource === 'skills' ? '0 0 30px rgba(139, 92, 246, 0.4)' : '0 0 30px rgba(34, 211, 238, 0.4)'
-              }}
-            >
-              <AppstoreOutlined className="text-3xl text-white" />
-            </div>
-            <h1
-              className="text-5xl font-bold mb-4"
-              style={{
-                background: dataSource === 'skills'
-                  ? 'linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 30%, #a78bfa 60%, #818cf8 100%)'
-                  : 'linear-gradient(135deg, #a5f3fc 0%, #67e8f9 30%, #22d3ee 60%, #0ea5e9 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}
-            >
-              {dataSource === 'skills' ? '技能包展示墙' : 'Claw Skills 展示墙'}
-            </h1>
-            <p className="text-lg max-w-2xl mx-auto" style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.7)' : 'rgba(103, 232, 249, 0.7)' }}>
-              {dataSource === 'skills'
-                ? '探索 OpenClaw 社区最受欢迎的 Skills，提升你的开发效率'
-                : '探索 ClawHub 高热度 Claw Skills，扩展你的 Agent 能力'
-              }
-            </p>
           </div>
           
           {/* 统计卡片 */}
