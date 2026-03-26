@@ -206,9 +206,10 @@ export default function SkillsWall() {
       title: <span className="text-gray-300">描述</span>,
       dataIndex: 'description',
       key: 'description',
+      width: 130,
       render: (desc: string) => (
         <Tooltip title={desc} placement="topLeft">
-          <span className="text-gray-400 truncate block max-w-[200px]">{desc}</span>
+          <span className="text-gray-400 truncate block max-w-[130px]">{desc}</span>
         </Tooltip>
       ),
     },
@@ -433,21 +434,6 @@ export default function SkillsWall() {
               <Option key={cat} value={cat}>{cat}</Option>
             ))}
           </Select>
-          
-          {/* 视图切换 */}
-          <Radio.Group 
-            value={viewType} 
-            onChange={(e) => setViewType(e.target.value)}
-            size="large"
-            className="custom-radio-group"
-          >
-            <Radio.Button value="card" className="flex items-center gap-1">
-              <TableOutlined /> 卡片
-            </Radio.Button>
-            <Radio.Button value="list" className="flex items-center gap-1">
-              <UnorderedListOutlined /> 列表
-            </Radio.Button>
-          </Radio.Group>
         </div>
       </div>
 
@@ -465,6 +451,20 @@ export default function SkillsWall() {
               <span style={{ color: '#9ca3af' }}>
                 共找到 <span className="font-bold" style={{ color: dataSource === 'skills' ? '#a78bfa' : '#22d3ee' }}>{filteredSkills.length}</span> 个技能
               </span>
+              {/* 视图切换 - 右上角 */}
+              <Radio.Group
+                value={viewType}
+                onChange={(e) => setViewType(e.target.value)}
+                size="small"
+                className="custom-radio-group"
+              >
+                <Radio.Button value="card" className="flex items-center gap-1">
+                  <TableOutlined /> 卡片
+                </Radio.Button>
+                <Radio.Button value="list" className="flex items-center gap-1">
+                  <UnorderedListOutlined /> 列表
+                </Radio.Button>
+              </Radio.Group>
             </div>
             
             {viewType === 'card' ? (
