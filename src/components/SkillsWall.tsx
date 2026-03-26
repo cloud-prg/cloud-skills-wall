@@ -120,98 +120,100 @@ export default function SkillsWall() {
     );
   };
 
-  // 表格列定义
+  // 表格列定义 - 优化布局，避免横向滚动
   const columns = [
     {
-      title: <span className="text-gray-300">排名</span>,
+      title: <span className="text-gray-300">#</span>,
       key: 'rank',
-      width: 70,
+      width: 50,
       render: (_: unknown, __: Skill, index: number) => (
-        <span className="font-bold text-purple-400">#{index + 1}</span>
+        <span className="font-bold text-purple-400">{index + 1}</span>
       ),
     },
     {
-      title: <span className="text-gray-300">技能名称</span>,
+      title: <span className="text-gray-300">技能</span>,
       dataIndex: 'name',
       key: 'name',
-      width: 200,
+      width: 180,
       render: (name: string, skill: Skill, index: number) => (
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-gray-100">{name}</span>
-          {index < 4 && <FireOutlined className="text-orange-400" />}
-        </div>
+        <Tooltip title={name} placement="topLeft">
+          <div className="flex items-center gap-1 truncate">
+            <span className="font-semibold text-gray-100 truncate">{name}</span>
+            {index < 4 && <FireOutlined className="text-orange-400 flex-shrink-0" />}
+          </div>
+        </Tooltip>
       ),
     },
     {
       title: <span className="text-gray-300">分类</span>,
       dataIndex: 'category',
       key: 'category',
-      width: 140,
+      width: 120,
       render: (category: string) => <CategoryTag category={category} />,
     },
     {
       title: <span className="text-gray-300">描述</span>,
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      render: (desc: string) => <span className="text-gray-400">{desc}</span>,
+      render: (desc: string) => (
+        <Tooltip title={desc} placement="topLeft">
+          <span className="text-gray-400 truncate block max-w-[200px]">{desc}</span>
+        </Tooltip>
+      ),
     },
     {
-      title: <span className="text-gray-300">安装量</span>,
+      title: <span className="text-gray-300">安装</span>,
       dataIndex: 'installs',
       key: 'installs',
-      width: 120,
+      width: 90,
       sorter: (a: Skill, b: Skill) => a.installs - b.installs,
       render: (installs: number) => (
-        <div className="flex items-center gap-2">
-          <RiseOutlined className="text-emerald-400" />
-          <span className="font-semibold text-emerald-400">{formatInstalls(installs)}</span>
+        <div className="flex items-center gap-1">
+          <RiseOutlined className="text-emerald-400 text-xs" />
+          <span className="font-semibold text-emerald-400 text-sm">{formatInstalls(installs)}</span>
         </div>
       ),
     },
     {
-      title: <span className="text-gray-300">作者</span>,
-      dataIndex: 'owner',
-      key: 'owner',
-      width: 120,
-      render: (owner: string) => <span className="text-gray-500">{owner}</span>,
-    },
-    {
-      title: <span className="text-gray-300">安装命令</span>,
+      title: <span className="text-gray-300">命令</span>,
       key: 'command',
-      width: 320,
+      width: 200,
       render: (skill: Skill) => (
-        <div className="flex items-center gap-2">
-          <code 
-            className="px-2 py-1 rounded text-xs flex-1 truncate font-mono"
-            style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#c4b5fd' }}
-          >
-            {skill.installCommand}
-          </code>
-          <Tooltip title="复制命令">
-            <Button
-              type="text"
-              size="small"
-              icon={<CopyOutlined style={{ color: '#a78bfa' }} />}
-              onClick={() => handleCopy(skill.installCommand)}
-            />
+        <div className="flex items-center gap-1">
+          <Tooltip title={skill.installCommand} placement="topLeft">
+            <code 
+              className="px-2 py-1 rounded text-xs truncate font-mono block max-w-[160px]"
+              style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#c4b5fd' }}
+            >
+              {skill.installCommand}
+            </code>
           </Tooltip>
+          <Button
+            type="text"
+            size="small"
+            icon={<CopyOutlined style={{ color: '#a78bfa', fontSize: '12px' }} />}
+            onClick={() => handleCopy(skill.installCommand)}
+            className="flex-shrink-0"
+          />
         </div>
       ),
     },
     {
       title: <span className="text-gray-300">操作</span>,
       key: 'action',
-      width: 120,
+      width: 100,
+      fixed: 'right',
       render: (skill: Skill) => (
-        <Space>
+        <Space size="small">
           <Button
             type="primary"
             size="small"
             style={{ 
               background: 'rgba(139, 92, 246, 0.2)', 
               borderColor: 'rgba(139, 92, 246, 0.5)',
-              color: '#c4b5fd'
+              color: '#c4b5fd',
+              fontSize: '12px',
+              padding: '0 8px'
             }}
             onClick={() => handleCopy(skill.installCommand)}
           >
@@ -220,13 +222,11 @@ export default function SkillsWall() {
           <Button
             size="small"
             type="link"
-            icon={<LinkOutlined />}
+            icon={<LinkOutlined style={{ fontSize: '14px' }} />}
             href={skill.url}
             target="_blank"
-            style={{ color: '#a78bfa' }}
-          >
-            查看
-          </Button>
+            style={{ color: '#a78bfa', padding: '0 4px' }}
+          />
         </Space>
       ),
     },
@@ -487,7 +487,6 @@ export default function SkillsWall() {
                   showSizeChanger: true,
                   showTotal: (total) => `共 ${total} 个技能`,
                 }}
-                scroll={{ x: 1200 }}
                 className="skills-table"
                 rowClassName={() => 'bg-transparent'}
               />

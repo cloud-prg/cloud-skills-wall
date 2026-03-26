@@ -15,21 +15,28 @@ body {
   background-color: #0a0a0f;
 }
 
-/* 自定义搜索框样式 */
-.custom-search .ant-input {
+/* 自定义搜索框样式 - 修复背景色留白 */
+.custom-search .ant-input-affix-wrapper {
   background: rgba(20, 20, 30, 0.9) !important;
   border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  box-shadow: none !important;
+}
+
+.custom-search .ant-input-affix-wrapper:hover,
+.custom-search .ant-input-affix-wrapper-focused {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+}
+
+.custom-search .ant-input {
+  background: transparent !important;
+  border: none !important;
   color: #e5e7eb !important;
+  box-shadow: none !important;
 }
 
 .custom-search .ant-input::placeholder {
   color: rgba(156, 163, 175, 0.6) !important;
-}
-
-.custom-search .ant-input:hover,
-.custom-search .ant-input:focus {
-  border-color: rgba(139, 92, 246, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
 }
 
 .custom-search .ant-input-group-addon {
@@ -46,6 +53,15 @@ body {
 
 .custom-search .ant-input-group-addon .ant-btn:hover {
   color: #e9d5ff !important;
+}
+
+/* 清除按钮样式 */
+.custom-search .ant-input-clear-icon {
+  color: rgba(156, 163, 175, 0.6) !important;
+}
+
+.custom-search .ant-input-clear-icon:hover {
+  color: #c4b5fd !important;
 }
 
 /* 自定义选择器样式 */
