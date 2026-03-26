@@ -412,7 +412,7 @@ export default function SkillsWall() {
         className="sticky top-0 z-10 py-4 px-4 border-b"
         style={{ background: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)', borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)' }}
       >
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row gap-4 items-center">
+        <div className="max-w-7xl mx-auto flex flex-row gap-4 items-center">
           <Search
             placeholder="搜索技能名称、描述或分类..."
             allowClear
@@ -427,8 +427,8 @@ export default function SkillsWall() {
             size="large"
             value={selectedCategory}
             onChange={handleCategoryChange}
-            className="w-full sm:w-auto custom-select"
-            style={{ minWidth: '200px' }}
+            className="custom-select"
+            style={{ minWidth: '180px', width: '180px' }}
           >
             {categories.map(cat => (
               <Option key={cat} value={cat}>{cat}</Option>
