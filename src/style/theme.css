@@ -1,0 +1,20 @@
+:root {
+  --page-bg: #0a0a0f;
+  --panel-bg: rgba(20, 20, 30, 0.9);
+  --panel-bg-weak: rgba(20, 20, 30, 0.8);
+  --text-main: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-secondary-rgb: 156, 163, 175;
+  --text-muted: #6b7280;
+  --text-weak: #4b5563;
+  --primary-50: #e9d5ff;
+  --primary-200: #c4b5fd;
+  --primary-300: #a78bfa;
+  --primary-500-rgb: 139, 92, 246;
+  --primary-cyan: #22d3ee;
+  --dropdown-bg: #14141e;
+  --tooltip-bg: #1f1f2e;
+  --scrollbar-thumb: #374151;
+  --scrollbar-thumb-hover: #4b5563;
+  --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.5);
+}

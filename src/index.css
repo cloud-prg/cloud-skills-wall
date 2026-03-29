@@ -12,95 +12,95 @@
 
 /* 全局背景 */
 body {
-  background-color: #0a0a0f;
+  background-color: var(--page-bg);
 }
 
 /* 自定义搜索框样式 - 修复背景色留白 */
 .custom-search .ant-input-affix-wrapper {
-  background: rgba(20, 20, 30, 0.9) !important;
-  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  background: var(--panel-bg) !important;
+  border: 1px solid rgba(var(--primary-500-rgb), 0.25) !important;
   box-shadow: none !important;
 }
 
 .custom-search .ant-input-affix-wrapper:hover,
 .custom-search .ant-input-affix-wrapper-focused {
-  border-color: rgba(139, 92, 246, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(var(--primary-500-rgb), 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(var(--primary-500-rgb), 0.1) !important;
 }
 
 .custom-search .ant-input {
   background: transparent !important;
   border: none !important;
-  color: #e5e7eb !important;
+  color: var(--text-main) !important;
   box-shadow: none !important;
 }
 
 .custom-search .ant-input::placeholder {
-  color: rgba(156, 163, 175, 0.6) !important;
+  color: rgba(var(--text-secondary-rgb), 0.6) !important;
 }
 
 .custom-search .ant-input-group-addon {
-  background: rgba(139, 92, 246, 0.2) !important;
-  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  background: rgba(var(--primary-500-rgb), 0.2) !important;
+  border: 1px solid rgba(var(--primary-500-rgb), 0.25) !important;
   border-left: none !important;
 }
 
 .custom-search .ant-input-group-addon .ant-btn {
   background: transparent !important;
   border: none !important;
-  color: #c4b5fd !important;
+  color: var(--primary-200) !important;
 }
 
 .custom-search .ant-input-group-addon .ant-btn:hover {
-  color: #e9d5ff !important;
+  color: var(--primary-50) !important;
 }
 
 /* 清除按钮样式 */
 .custom-search .ant-input-clear-icon {
-  color: rgba(156, 163, 175, 0.6) !important;
+  color: rgba(var(--text-secondary-rgb), 0.6) !important;
 }
 
 .custom-search .ant-input-clear-icon:hover {
-  color: #c4b5fd !important;
+  color: var(--primary-200) !important;
 }
 
 /* 自定义选择器样式 */
 .custom-select .ant-select-selector {
-  background: rgba(20, 20, 30, 0.9) !important;
-  border: 1px solid rgba(139, 92, 246, 0.25) !important;
-  color: #e5e7eb !important;
+  background: var(--panel-bg) !important;
+  border: 1px solid rgba(var(--primary-500-rgb), 0.25) !important;
+  color: var(--text-main) !important;
 }
 
 .custom-select .ant-select-selector:hover,
 .custom-select.ant-select-focused .ant-select-selector {
-  border-color: rgba(139, 92, 246, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(var(--primary-500-rgb), 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(var(--primary-500-rgb), 0.1) !important;
 }
 
 .custom-select .ant-select-arrow {
-  color: #a78bfa !important;
+  color: var(--primary-300) !important;
 }
 
 /* 下拉菜单样式 */
 .ant-select-dropdown {
-  background: #14141e !important;
-  border: 1px solid rgba(139, 92, 246, 0.2) !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid rgba(var(--primary-500-rgb), 0.2) !important;
+  box-shadow: var(--shadow-strong) !important;
 }
 
 .ant-select-item {
-  color: #9ca3af !important;
+  color: var(--text-secondary) !important;
   background: transparent !important;
 }
 
 .ant-select-item-option-active {
-  background: rgba(139, 92, 246, 0.15) !important;
-  color: #e5e7eb !important;
+  background: rgba(var(--primary-500-rgb), 0.15) !important;
+  color: var(--text-main) !important;
 }
 
 .ant-select-item-option-selected {
-  background: rgba(139, 92, 246, 0.25) !important;
-  color: #e9d5ff !important;
+  background: rgba(var(--primary-500-rgb), 0.25) !important;
+  color: var(--primary-50) !important;
 }
 
 /* 单选按钮组样式 */

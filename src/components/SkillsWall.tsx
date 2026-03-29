@@ -1,60 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Card, Tag, Button, Input, Select, Statistic, Row, Col, Tooltip, Badge, Empty, Table, Radio, Space } from 'antd';
+import { Card, Button, Input, Select, Statistic, Row, Col, Tooltip, Empty, Table, Radio, Space } from 'antd';
 import { CopyOutlined, LinkOutlined, RiseOutlined, SearchOutlined, FireOutlined, UnorderedListOutlined, TableOutlined } from '@ant-design/icons';
-import type { Skill } from '../services/skillsData';
 import { getTopSkills, getCategories, searchSkills, getStats } from '../services/skillsData';
-import type { ClawSkill } from '../services/clawSkillsData';
 import { getTopClawSkills, getClawCategories, searchClawSkills, getClawStats } from '../services/clawSkillsData';
+import { getCategoryStyle, SOURCE_THEME_COLORS, STATIC_THEME_COLORS } from '../style/palette';
 
 // 数据源类型
 type DataSourceType = 'skills' | 'claw';
 
 const { Search } = Input;
 const { Option } = Select;
-
-// 分类颜色映射 - 适配深色主题，使用柔和的颜色
-const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
-  'React / Next.js': { bg: 'rgba(96, 165, 250, 0.15)', text: '#93c5fd', border: 'rgba(96, 165, 250, 0.3)' },
-  'Vue.js': { bg: 'rgba(74, 222, 128, 0.15)', text: '#86efac', border: 'rgba(74, 222, 128, 0.3)' },
-  'TypeScript': { bg: 'rgba(129, 140, 248, 0.15)', text: '#a5b4fc', border: 'rgba(129, 140, 248, 0.3)' },
-  'CSS / Tailwind': { bg: 'rgba(34, 211, 238, 0.15)', text: '#67e8f9', border: 'rgba(34, 211, 238, 0.3)' },
-  '测试': { bg: 'rgba(251, 146, 60, 0.15)', text: '#fdba74', border: 'rgba(251, 146, 60, 0.3)' },
-  '数据库': { bg: 'rgba(167, 139, 250, 0.15)', text: '#c4b5fd', border: 'rgba(167, 139, 250, 0.3)' },
-  '认证': { bg: 'rgba(251, 191, 36, 0.15)', text: '#fcd34d', border: 'rgba(251, 191, 36, 0.3)' },
-  'DevOps / Docker': { bg: 'rgba(248, 113, 113, 0.15)', text: '#fca5a5', border: 'rgba(248, 113, 113, 0.3)' },
-  'CI/CD / 部署': { bg: 'rgba(232, 121, 249, 0.15)', text: '#f0abfc', border: 'rgba(232, 121, 249, 0.3)' },
-  '全栈开发': { bg: 'rgba(192, 132, 252, 0.15)', text: '#d8b4fe', border: 'rgba(192, 132, 252, 0.3)' },
-  '移动端开发': { bg: 'rgba(163, 230, 53, 0.15)', text: '#bef264', border: 'rgba(163, 230, 53, 0.3)' },
-  'Python': { bg: 'rgba(250, 204, 21, 0.15)', text: '#fde047', border: 'rgba(250, 204, 21, 0.3)' },
-  'Node.js / 后端': { bg: 'rgba(56, 189, 248, 0.15)', text: '#7dd3fc', border: 'rgba(56, 189, 248, 0.3)' },
-  'GraphQL': { bg: 'rgba(244, 114, 182, 0.15)', text: '#f9a8d4', border: 'rgba(244, 114, 182, 0.3)' },
-  '设计 / UI': { bg: 'rgba(192, 132, 252, 0.15)', text: '#d8b4fe', border: 'rgba(192, 132, 252, 0.3)' },
-  '文档': { bg: 'rgba(148, 163, 184, 0.15)', text: '#cbd5e1', border: 'rgba(148, 163, 184, 0.3)' },
-  '代码质量 / 重构': { bg: 'rgba(45, 212, 191, 0.15)', text: '#5eead4', border: 'rgba(45, 212, 191, 0.3)' },
-  '安全': { bg: 'rgba(248, 113, 113, 0.15)', text: '#fca5a5', border: 'rgba(248, 113, 113, 0.3)' },
-  '性能优化': { bg: 'rgba(251, 191, 36, 0.15)', text: '#fcd34d', border: 'rgba(251, 191, 36, 0.3)' },
-  'Git / GitHub': { bg: 'rgba(148, 163, 184, 0.15)', text: '#cbd5e1', border: 'rgba(148, 163, 184, 0.3)' },
-  'API / 爬虫': { bg: 'rgba(34, 211, 238, 0.15)', text: '#67e8f9', border: 'rgba(34, 211, 238, 0.3)' },
-  '特殊 Skills': { bg: 'rgba(232, 121, 249, 0.15)', text: '#f0abfc', border: 'rgba(232, 121, 249, 0.3)' },
-  '工作流 / 自动化': { bg: 'rgba(251, 191, 36, 0.15)', text: '#fcd34d', border: 'rgba(251, 191, 36, 0.3)' },
-};
-
-// Claw Skills 分类颜色映射
-const clawCategoryColors: Record<string, { bg: string; text: string; border: string }> = {
-  'Agent 工具': { bg: 'rgba(96, 165, 250, 0.15)', text: '#93c5fd', border: 'rgba(96, 165, 250, 0.3)' },
-  'MCP': { bg: 'rgba(167, 139, 250, 0.15)', text: '#c4b5fd', border: 'rgba(167, 139, 250, 0.3)' },
-  'Agent 治理': { bg: 'rgba(74, 222, 128, 0.15)', text: '#86efac', border: 'rgba(74, 222, 128, 0.3)' },
-  'ClawDirect': { bg: 'rgba(251, 191, 36, 0.15)', text: '#fcd34d', border: 'rgba(251, 191, 36, 0.3)' },
-  'OpenClaw 工具': { bg: 'rgba(34, 211, 238, 0.15)', text: '#67e8f9', border: 'rgba(34, 211, 238, 0.3)' },
-  '自我改进': { bg: 'rgba(244, 114, 182, 0.15)', text: '#f9a8d4', border: 'rgba(244, 114, 182, 0.3)' },
-  '安全': { bg: 'rgba(248, 113, 113, 0.15)', text: '#fca5a5', border: 'rgba(248, 113, 113, 0.3)' },
-};
-
-// 获取分类样式
-const getCategoryStyle = (category: string, isClaw: boolean = false) => {
-  const colors = isClaw ? clawCategoryColors : categoryColors;
-  return colors[category] || { bg: 'rgba(148, 163, 184, 0.15)', text: '#cbd5e1', border: 'rgba(148, 163, 184, 0.3)' };
-};
 
 // 格式化安装量
 const formatInstalls = (num: number): string => {
@@ -94,6 +49,7 @@ export default function SkillsWall() {
     topSkill: null as UnifiedSkill | null,
     averageInstalls: 0
   });
+  const sourceColors = SOURCE_THEME_COLORS[dataSource];
 
   // 根据数据源加载数据
   useEffect(() => {
@@ -156,7 +112,7 @@ export default function SkillsWall() {
 
   // 自定义分类标签组件
   const CategoryTag = ({ category }: { category: string }) => {
-    const style = getCategoryStyle(category, dataSource === 'claw');
+    const style = getCategoryStyle(category, dataSource);
     return (
       <span
         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
@@ -186,7 +142,7 @@ export default function SkillsWall() {
       dataIndex: 'name',
       key: 'name',
       width: 180,
-      render: (name: string, skill: UnifiedSkill, index: number) => (
+      render: (name: string, _skill: UnifiedSkill, index: number) => (
         <Tooltip title={name} placement="topLeft">
           <div className="flex items-center gap-1 truncate">
             <span className="font-semibold text-gray-100 truncate">{name}</span>
@@ -235,7 +191,7 @@ export default function SkillsWall() {
           <Tooltip title={skill.installCommand} placement="topLeft">
             <code 
               className="px-2 py-1 rounded text-xs truncate font-mono block max-w-[160px]"
-              style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#c4b5fd' }}
+              style={{ background: STATIC_THEME_COLORS.commandBg, color: STATIC_THEME_COLORS.commandText }}
             >
               {skill.installCommand}
             </code>
@@ -243,7 +199,7 @@ export default function SkillsWall() {
           <Button
             type="text"
             size="small"
-            icon={<CopyOutlined style={{ color: '#a78bfa', fontSize: '12px' }} />}
+            icon={<CopyOutlined style={{ color: STATIC_THEME_COLORS.commandIcon, fontSize: '12px' }} />}
             onClick={() => handleCopy(skill.installCommand)}
             className="flex-shrink-0"
           />
@@ -254,16 +210,16 @@ export default function SkillsWall() {
       title: <span className="text-gray-300">操作</span>,
       key: 'action',
       width: 100,
-      fixed: 'right',
+      fixed: 'right' as const,
       render: (skill: UnifiedSkill) => (
         <Space size="small">
           <Button
             type="primary"
             size="small"
             style={{ 
-              background: 'rgba(139, 92, 246, 0.2)', 
-              borderColor: 'rgba(139, 92, 246, 0.5)',
-              color: '#c4b5fd',
+              background: sourceColors.actionBg,
+              borderColor: sourceColors.actionBorder,
+              color: sourceColors.actionText,
               fontSize: '12px',
               padding: '0 8px'
             }}
@@ -277,7 +233,7 @@ export default function SkillsWall() {
             icon={<LinkOutlined style={{ fontSize: '14px' }} />}
             href={skill.url}
             target="_blank"
-            style={{ color: '#a78bfa', padding: '0 4px' }}
+            style={{ color: sourceColors.link, padding: '0 4px' }}
           />
         </Space>
       ),
@@ -285,21 +241,19 @@ export default function SkillsWall() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0f' }}>
+    <div className="min-h-screen" style={{ background: STATIC_THEME_COLORS.pageBg }}>
       {/* 头部区域 - 暗黑魔幻紫主题 */}
       <div
         className="text-white py-12 px-4 relative overflow-hidden"
         style={{
-          background: dataSource === 'skills'
-            ? 'linear-gradient(135deg, #0f0c29 0%, #1a1650 30%, #302b63 60%, #24243e 100%)'
-            : 'linear-gradient(135deg, #0c1a1f 0%, #0f2a35 30%, #1a3a4a 60%, #1a2a3a 100%)',
+          background: sourceColors.gradientHeader,
         }}
       >
         {/* 魔幻背景装饰 */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)' }} />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: dataSource === 'skills' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(56, 189, 248, 0.15)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: dataSource === 'skills' ? 'rgba(167, 139, 250, 0.08)' : 'rgba(34, 211, 238, 0.08)' }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: sourceColors.glowPrimary }} />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: sourceColors.glowSecondary }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: sourceColors.glowCenter }} />
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
@@ -323,7 +277,7 @@ export default function SkillsWall() {
               height="64"
               fill="white"
               className="drop-shadow-lg"
-              style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))' }}
+              style={{ filter: STATIC_THEME_COLORS.iconGlow }}
             >
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
             </svg>
@@ -333,9 +287,7 @@ export default function SkillsWall() {
           <h1
             className="text-5xl font-bold mb-4"
             style={{
-              background: dataSource === 'skills'
-                ? 'linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 30%, #a78bfa 60%, #818cf8 100%)'
-                : 'linear-gradient(135deg, #a5f3fc 0%, #67e8f9 30%, #22d3ee 60%, #0ea5e9 100%)',
+              background: sourceColors.titleGradient,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
@@ -345,7 +297,7 @@ export default function SkillsWall() {
           </h1>
 
           {/* 副标题 */}
-          <p className="text-lg max-w-2xl mx-auto mb-10" style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.7)' : 'rgba(103, 232, 249, 0.7)' }}>
+          <p className="text-lg max-w-2xl mx-auto mb-10" style={{ color: sourceColors.subtitle }}>
             {dataSource === 'skills'
               ? '探索 OpenClaw 社区最受欢迎的 Skills，提升你的开发效率'
               : '探索 ClawHub 高热度 Claw Skills，扩展你的 Agent 能力'
@@ -357,48 +309,48 @@ export default function SkillsWall() {
             <Col xs={12} sm={6}>
               <Card
                 className="border-0 text-center"
-                style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', border: `1px solid ${dataSource === 'skills' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(34, 211, 238, 0.1)'}` }}
+                style={{ background: STATIC_THEME_COLORS.cardGlassBg, backdropFilter: 'blur(10px)', border: `1px solid ${sourceColors.panelBorder}` }}
               >
                 <Statistic
-                  title={<span style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.6)' : 'rgba(103, 232, 249, 0.6)' }}>总技能数</span>}
+                  title={<span style={{ color: sourceColors.mutedTitle }}>总技能数</span>}
                   value={stats.totalSkills}
-                  valueStyle={{ color: dataSource === 'skills' ? '#e9d5ff' : '#a5f3fc', fontSize: '28px', fontWeight: 'bold' }}
+                  valueStyle={{ color: sourceColors.stat1, fontSize: '28px', fontWeight: 'bold' }}
                 />
               </Card>
             </Col>
             <Col xs={12} sm={6}>
               <Card
                 className="border-0 text-center"
-                style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', border: `1px solid ${dataSource === 'skills' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(34, 211, 238, 0.1)'}` }}
+                style={{ background: STATIC_THEME_COLORS.cardGlassBg, backdropFilter: 'blur(10px)', border: `1px solid ${sourceColors.panelBorder}` }}
               >
                 <Statistic
-                  title={<span style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.6)' : 'rgba(103, 232, 249, 0.6)' }}>总安装量</span>}
+                  title={<span style={{ color: sourceColors.mutedTitle }}>总安装量</span>}
                   value={formatInstalls(stats.totalInstalls)}
-                  valueStyle={{ color: dataSource === 'skills' ? '#ddd6fe' : '#67e8f9', fontSize: '28px', fontWeight: 'bold' }}
+                  valueStyle={{ color: sourceColors.stat2, fontSize: '28px', fontWeight: 'bold' }}
                 />
               </Card>
             </Col>
             <Col xs={12} sm={6}>
               <Card
                 className="border-0 text-center"
-                style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', border: `1px solid ${dataSource === 'skills' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(34, 211, 238, 0.1)'}` }}
+                style={{ background: STATIC_THEME_COLORS.cardGlassBg, backdropFilter: 'blur(10px)', border: `1px solid ${sourceColors.panelBorder}` }}
               >
                 <Statistic
-                  title={<span style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.6)' : 'rgba(103, 232, 249, 0.6)' }}>分类数量</span>}
+                  title={<span style={{ color: sourceColors.mutedTitle }}>分类数量</span>}
                   value={stats.categoryCount}
-                  valueStyle={{ color: dataSource === 'skills' ? '#c4b5fd' : '#22d3ee', fontSize: '28px', fontWeight: 'bold' }}
+                  valueStyle={{ color: sourceColors.stat3, fontSize: '28px', fontWeight: 'bold' }}
                 />
               </Card>
             </Col>
             <Col xs={12} sm={6}>
               <Card
                 className="border-0 text-center"
-                style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', border: `1px solid ${dataSource === 'skills' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(34, 211, 238, 0.1)'}` }}
+                style={{ background: STATIC_THEME_COLORS.cardGlassBg, backdropFilter: 'blur(10px)', border: `1px solid ${sourceColors.panelBorder}` }}
               >
                 <Statistic
-                  title={<span style={{ color: dataSource === 'skills' ? 'rgba(196, 181, 253, 0.6)' : 'rgba(103, 232, 249, 0.6)' }}>平均安装</span>}
+                  title={<span style={{ color: sourceColors.mutedTitle }}>平均安装</span>}
                   value={formatInstalls(stats.averageInstalls)}
-                  valueStyle={{ color: dataSource === 'skills' ? '#a78bfa' : '#0ea5e9', fontSize: '28px', fontWeight: 'bold' }}
+                  valueStyle={{ color: sourceColors.stat4, fontSize: '28px', fontWeight: 'bold' }}
                 />
               </Card>
             </Col>
@@ -409,7 +361,7 @@ export default function SkillsWall() {
       {/* 筛选区域 */}
       <div
         className="sticky top-0 z-10 py-4 px-4 border-b"
-        style={{ background: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)', borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)' }}
+        style={{ background: STATIC_THEME_COLORS.panelBg, backdropFilter: 'blur(10px)', borderColor: sourceColors.panelBorder }}
       >
         <div className="max-w-7xl mx-auto flex flex-row gap-4 items-center">
           <Search
@@ -440,15 +392,15 @@ export default function SkillsWall() {
       <div className="max-w-7xl mx-auto py-8 px-4">
         {filteredSkills.length === 0 ? (
           <Empty 
-            description={<span style={{ color: '#6b7280' }}>没有找到匹配的技能</span>}
+            description={<span style={{ color: STATIC_THEME_COLORS.secondaryText }}>没有找到匹配的技能</span>}
             className="py-16"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         ) : (
           <>
             <div className="mb-4 flex items-center justify-between">
-              <span style={{ color: '#9ca3af' }}>
-                共找到 <span className="font-bold" style={{ color: dataSource === 'skills' ? '#a78bfa' : '#22d3ee' }}>{filteredSkills.length}</span> 个技能
+              <span style={{ color: STATIC_THEME_COLORS.descText }}>
+                共找到 <span className="font-bold" style={{ color: sourceColors.badge }}>{filteredSkills.length}</span> 个技能
               </span>
               {/* 视图切换 - 右上角 */}
               <Radio.Group
@@ -474,15 +426,15 @@ export default function SkillsWall() {
                     key={skill.id}
                     className="border-0 transition-all duration-300 hover:shadow-lg"
                     style={{
-                      background: 'rgba(20, 20, 30, 0.8)',
-                      border: `1px solid ${dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)'}`,
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                      background: STATIC_THEME_COLORS.cardBg,
+                      border: `1px solid ${sourceColors.cardBorder}`,
+                      boxShadow: STATIC_THEME_COLORS.cardShadow
                     }}
                     title={
                       <div className="flex items-center gap-2">
-                        <span className="truncate font-semibold" style={{ color: '#e5e7eb' }}>{skill.name}</span>
+                        <span className="truncate font-semibold" style={{ color: STATIC_THEME_COLORS.titleText }}>{skill.name}</span>
                         {index < 4 && (
-                          <FireOutlined style={{ color: '#fb923c' }} />
+                          <FireOutlined style={{ color: STATIC_THEME_COLORS.hotIcon }} />
                         )}
                       </div>
                     }
@@ -490,30 +442,30 @@ export default function SkillsWall() {
                   >
                     <div className="space-y-3">
                       {/* 描述 */}
-                      <p className="text-sm line-clamp-2 h-10" style={{ color: '#9ca3af' }}>
+                      <p className="text-sm line-clamp-2 h-10" style={{ color: STATIC_THEME_COLORS.descText }}>
                         {skill.description}
                       </p>
                       
                       {/* 安装量 */}
                       <div className="flex items-center gap-2 text-sm">
-                        <RiseOutlined style={{ color: '#34d399' }} />
-                        <span className="font-semibold" style={{ color: '#34d399' }}>
+                        <RiseOutlined style={{ color: STATIC_THEME_COLORS.rise }} />
+                        <span className="font-semibold" style={{ color: STATIC_THEME_COLORS.rise }}>
                           {formatInstalls(skill.installs)}
                         </span>
-                        <span style={{ color: '#6b7280' }}>次安装</span>
+                        <span style={{ color: STATIC_THEME_COLORS.secondaryText }}>次安装</span>
                       </div>
                       
                       {/* 安装命令 */}
                       <div
                         className="rounded p-2 text-xs font-mono break-all relative group border"
-                        style={{ background: 'rgba(10, 10, 15, 0.8)', borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 211, 238, 0.2)' }}
+                        style={{ background: STATIC_THEME_COLORS.codeBg, borderColor: sourceColors.codeBorder }}
                       >
-                        <code style={{ color: dataSource === 'skills' ? '#c4b5fd' : '#67e8f9' }}>{skill.installCommand}</code>
+                        <code style={{ color: sourceColors.actionText }}>{skill.installCommand}</code>
                         <Tooltip title="复制命令">
                           <Button
                             type="text"
                             size="small"
-                            icon={<CopyOutlined style={{ color: dataSource === 'skills' ? '#a78bfa' : '#22d3ee' }} />}
+                            icon={<CopyOutlined style={{ color: sourceColors.link }} />}
                             className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => handleCopy(skill.installCommand)}
                           />
@@ -528,9 +480,9 @@ export default function SkillsWall() {
                           onClick={() => handleCopy(skill.installCommand)}
                           className="flex-1"
                           style={{
-                            background: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)',
-                            borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.4)' : 'rgba(34, 211, 238, 0.4)',
-                            color: dataSource === 'skills' ? '#c4b5fd' : '#67e8f9'
+                            background: sourceColors.actionBg,
+                            borderColor: sourceColors.actionBorder,
+                            color: sourceColors.actionText
                           }}
                         >
                           复制命令
@@ -541,15 +493,15 @@ export default function SkillsWall() {
                           icon={<LinkOutlined />}
                           href={skill.url}
                           target="_blank"
-                          style={{ color: dataSource === 'skills' ? '#a78bfa' : '#22d3ee' }}
+                          style={{ color: sourceColors.link }}
                         >
                           查看
                         </Button>
                       </div>
 
                       {/* 所有者信息 */}
-                      <div className="text-xs pt-2 border-t" style={{ color: '#6b7280', borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(34, 211, 238, 0.1)' }}>
-                        作者: <span style={{ color: '#9ca3af' }}>{skill.owner}</span>
+                      <div className="text-xs pt-2 border-t" style={{ color: STATIC_THEME_COLORS.secondaryText, borderColor: sourceColors.panelBorder }}>
+                        作者: <span style={{ color: STATIC_THEME_COLORS.descText }}>{skill.owner}</span>
                       </div>
                     </div>
                   </Card>
@@ -577,16 +529,16 @@ export default function SkillsWall() {
       {/* 底部信息 */}
       <div
         className="py-8 px-4 mt-12 border-t"
-        style={{ background: 'rgba(10, 10, 15, 0.8)', borderColor: dataSource === 'skills' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(34, 211, 238, 0.15)' }}
+        style={{ background: STATIC_THEME_COLORS.codeBg, borderColor: sourceColors.panelBorder }}
       >
         <div className="max-w-7xl mx-auto text-center">
-          <p className="mb-2" style={{ color: dataSource === 'skills' ? '#a78bfa' : '#22d3ee' }}>
+          <p className="mb-2" style={{ color: sourceColors.footerText }}>
             {dataSource === 'skills' ? '技能包展示墙 - OpenClaw Skills Marketplace' : 'Claw Skills 展示墙 - ClawHub'}
           </p>
-          <p className="text-sm" style={{ color: '#6b7280' }}>
+          <p className="text-sm" style={{ color: STATIC_THEME_COLORS.secondaryText }}>
             数据来源于 {dataSource === 'skills' ? 'skills.sh' : 'clawhub.com'} 社区排行榜 · 定期自动更新
           </p>
-          <p className="text-xs mt-4" style={{ color: '#4b5563' }}>
+          <p className="text-xs mt-4" style={{ color: STATIC_THEME_COLORS.weakText }}>
             安装命令: npx skills add {'<owner/repo@skill>'}
           </p>
         </div>
